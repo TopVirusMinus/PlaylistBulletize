@@ -1,10 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
-const Input = ({ handleUrlChange, handlePlaylistInfo }) => {
+const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [playlist, setPlaylist] = useState("");
   const [error, setError] = useState("");
 
   let playlistRegex = /https:\/\/www\.youtube\.com\/playlist\?list=[\S]+/;
@@ -24,11 +23,9 @@ const Input = ({ handleUrlChange, handlePlaylistInfo }) => {
       const playlistData = response.data.items;
       setIsLoading((prev) => false);
       if (playlistData.length > 0) {
-        setPlaylist((prev) => playlistData);
         handlePlaylistInfo((prev) => playlistData);
         setError((prev) => "");
       } else {
-        setPlaylist((prev) => "");
         handlePlaylistInfo((prev) => "");
         setError((prev) => "Playlist Not Found");
       }
@@ -55,8 +52,8 @@ const Input = ({ handleUrlChange, handlePlaylistInfo }) => {
           ? "Fetching Playlist..."
           : error
           ? error
-          : playlist[0]
-          ? playlist[0].snippet.localized.title
+          : playListInfo[0]
+          ? playListInfo[0].snippet.localized.title
           : ""}
       </p>
       <button

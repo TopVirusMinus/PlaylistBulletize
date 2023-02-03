@@ -10,7 +10,11 @@ function App() {
   return (
     <div className="lg:w-5/6 md:w-full mx-auto">
       <Navbar />
-      <Input handleUrlChange={setUrl} handlePlaylistInfo={setPlaylistInfo} />
+      <Input
+        handleUrlChange={setUrl}
+        handlePlaylistInfo={setPlaylistInfo}
+        playListInfo={getPlaylistInfo}
+      />
       {getPlaylistInfo.length ? <Results /> : ""}
     </div>
   );
