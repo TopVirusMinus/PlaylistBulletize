@@ -23,9 +23,15 @@ const Input = ({ handleUrlChange, handlePlaylistInfo }) => {
       );
       const playlistData = response.data.items;
       setIsLoading((prev) => false);
-      setPlaylist((prev) => playlistData);
-      handlePlaylistInfo((prev) => playlistData);
-      console.log(playlistData);
+      if (playlistData.length > 0) {
+        setPlaylist((prev) => playlistData);
+        handlePlaylistInfo((prev) => playlistData);
+        setError((prev) => "");
+      } else {
+        setPlaylist((prev) => "");
+        handlePlaylistInfo((prev) => "");
+        setError((prev) => "Playlist Not Found");
+      }
     } catch (error) {
       setError((prev) => error);
     }
