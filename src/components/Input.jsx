@@ -16,9 +16,11 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
     try {
       setIsLoading((prev) => true);
       const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${
+        `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${
           text.split("=")[1]
-        }&key=${import.meta.env.VITE_YOUTUBE_API_KEY}`
+        }&key=${
+          import.meta.env.VITE_YOUTUBE_API_KEY
+        }&maxResults=200&part=snippet,id`
       );
       const playlistData = response.data.items;
       setIsLoading((prev) => false);
@@ -53,7 +55,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
           : error
           ? error
           : playListInfo[0]
-          ? playListInfo[0].snippet.localized.title
+          ? "Playlist Found!"
           : ""}
       </p>
       <button
