@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +48,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
           !playlistRegex.test(text) ? "outline-red-600" : "outline-lime-400"
         } `}
       />
-      <p className=" mt-2 text-gray-700">
+      <p className={` ${playListInfo[0] && "opacity-0	"} mt-2 text-gray-700`}>
         {!playlistRegex.test(text)
           ? "URL Format must be https://www.youtube.com/playlist?list="
           : isLoading
@@ -55,7 +56,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
           : error
           ? error
           : playListInfo[0]
-          ? "Playlist Found!"
+          ? toast.success("Playlist Found!")
           : ""}
       </p>
       <button
@@ -65,6 +66,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
       >
         Fetch
       </button>
+      <Toaster />
     </div>
   );
 };

@@ -2,14 +2,19 @@ import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 const Results = ({ list }) => {
-  const [listType, setListType] = useState("bulleted");
+  const [listType, setListType] = useState("none");
+  const [checkedReverse, setCheckedReverse] = useState(false);
   console.log(listType);
 
   const listOfVideos = list.map((l, i) =>
     listType === "bulleted"
       ? `- ${l.snippet.title}`
-      : `${i + 1}. ${l.snippet.title}`
+      : listType === "numbered"
+      ? `${i + 1}. ${l.snippet.title}`
+      : `${l.snippet.title}`
   );
+
+  checkedReverse && listOfVideos.reverse();
 
   const copyList = listOfVideos.join("\r\n");
   const copyToast = () => toast.success("Copied To Clipboard!");
@@ -17,7 +22,19 @@ const Results = ({ list }) => {
   return (
     <div className="mx-auto w-fit mt-4">
       <div className="flex flex-col ">
-        <label>
+        <p className="font-bold">Format List: </p>
+        <label className="w-28">
+          <input
+            type="radio"
+            name="listType"
+            value="none"
+            checked={listType === "none"}
+            onChange={() => setListType("none")}
+            className="mr-2"
+          />
+          None
+        </label>
+        <label className="w-28">
           <input
             type="radio"
             name="listType"
@@ -28,7 +45,7 @@ const Results = ({ list }) => {
           />
           Bulleted
         </label>
-        <label>
+        <label className=" w-28">
           <input
             type="radio"
             name="listType"
@@ -39,9 +56,17 @@ const Results = ({ list }) => {
           />
           Numbered
         </label>
+        <label>
+          <input
+            className="mr-2"
+            type="checkbox"
+            defaultChecked={checkedReverse}
+            onChange={() => setCheckedReverse(!checkedReverse)}
+          />
+          Reverse
+        </label>
       </div>
-
-      <div class="read-only overflow-scroll w-fit max-w-80% mt-5 font-semibold block h-80 px-3 outline-none text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+      <div class="read-only overflow-scroll w-fit lg:max-w-80% sm:w-100% w-max-sm mt-5 font-semibold block h-80 px-3 outline-none text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
         {listOfVideos.map((l) => (
           <div>{l}</div>
         ))}
