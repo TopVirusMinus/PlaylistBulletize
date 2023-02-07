@@ -57,7 +57,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         } sm:text-center mt-2 text-gray-700`}
       >
         {!playlistRegex.test(text) && !playlistRegex2.test(text)
-          ? "URL Format must be https://www.youtube.com/playlist?list="
+          ? "URL Format: https://www.youtube.com/playlist?list="
           : isLoading
           ? "Fetching Playlist..."
           : error
