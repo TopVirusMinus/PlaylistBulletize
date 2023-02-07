@@ -18,11 +18,14 @@ const Navbar = () => {
             <path d="M22 18v2H2v-2h20zM2 3.5l8 5-8 5v-10zM22 11v2H12v-2h10zm0-7v2H12V4h10z"></path>
           </g>
         </svg>
-        <a href="/" className="font-bold text-4xl	tracking-tight cursor-pointer">
+        <a
+          href="/"
+          className="font-bold lg:text-4xl md:text-4xl sm:text-sm	tracking-tight cursor-pointer"
+        >
           PlaylistBulletize
         </a>
       </div>
-      <div className="flex justify-evenly w-28">
+      <div className="flex justify-evenly w-36">
         <a
           href="https://www.linkedin.com/in/mustafa-walid-273b951a9/"
           target="_blank"
