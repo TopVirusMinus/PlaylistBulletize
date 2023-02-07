@@ -44,11 +44,11 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         value={text}
         placeholder="Paste URL"
         onChange={(e) => handleChange(e)}
-        className={`bg-transparent outline-none p-2 w-96 ${
+        className={`bg-transparent outline-none p-2 w-96 max-w-xs ${
           !playlistRegex.test(text) ? "outline-red-600" : "outline-lime-400"
         } `}
       />
-      <p className={` ${playListInfo[0] && "opacity-0	"} mt-2 text-gray-700`}>
+      <p className={` ${playListInfo[0] && "opacity-0	"} mt-2  text-gray-700`}>
         {!playlistRegex.test(text)
           ? "URL Format must be https://www.youtube.com/playlist?list="
           : isLoading
