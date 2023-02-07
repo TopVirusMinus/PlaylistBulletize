@@ -8,6 +8,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
   const [error, setError] = useState("");
 
   let playlistRegex = /https:\/\/www\.youtube\.com\/playlist\?list=[\S]+/;
+  let playlistRegex2 = /https:\/\/\youtube\.com\/playlist\?list=[\S]+/;
 
   const handleChange = (e) => {
     setText((prev) => e.target.value);
@@ -45,11 +46,17 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         placeholder="Paste URL"
         onChange={(e) => handleChange(e)}
         className={`bg-transparent outline-none p-2 w-96 max-w-xs ${
-          !playlistRegex.test(text) ? "outline-red-600" : "outline-lime-400"
+          !playlistRegex.test(text) && !playlistRegex2.test(text)
+            ? "outline-red-600"
+            : "outline-lime-400"
         } `}
       />
-      <p className={` ${playListInfo[0] && "opacity-0	"} mt-2  text-gray-700`}>
-        {!playlistRegex.test(text)
+      <p
+        className={` ${
+          playListInfo[0] && "opacity-0	"
+        } sm:text-center mt-2 text-gray-700`}
+      >
+        {!playlistRegex.test(text) && !playlistRegex2.test(text)
           ? "URL Format must be https://www.youtube.com/playlist?list="
           : isLoading
           ? "Fetching Playlist..."
@@ -61,7 +68,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
       </p>
       <button
         onClick={() => getPlaylistData()}
-        disabled={!playlistRegex.test(text)}
+        disabled={!playlistRegex.test(text) && !playlistRegex2.test(text)}
         className="border-2 enabled:border-black p-2 w-64 font-bold rounded-md enabled:hover:bg-black enabled:hover:text-gray-50 disabled:border-[gray] disabled:text-gray-600"
       >
         Fetch
