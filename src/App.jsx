@@ -10,14 +10,16 @@ function App() {
   console.log(getPlaylistInfo);
   return (
     <>
-      <div className="relative lg:w-5/6 md:w-full mx-auto h-[100vh]">
-        <Navbar />
-        <Input
-          handleUrlChange={setUrl}
-          handlePlaylistInfo={setPlaylistInfo}
-          playListInfo={getPlaylistInfo}
-        />
-        {getPlaylistInfo.length ? <Results list={getPlaylistInfo} /> : ""}
+      <div className="lg:w-5/6 md:w-full mx-auto flex flex-col h-[100vh] justify-between items-center">
+        <div className="w-full">
+          <Navbar />
+          <Input
+            handleUrlChange={setUrl}
+            handlePlaylistInfo={setPlaylistInfo}
+            playListInfo={getPlaylistInfo}
+          />
+          {getPlaylistInfo.length ? <Results list={getPlaylistInfo} /> : ""}
+        </div>
         <Footer />
       </div>
     </>

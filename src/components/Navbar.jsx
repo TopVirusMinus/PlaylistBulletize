@@ -1,8 +1,8 @@
 import React from "react";
 const Navbar = () => {
   return (
-    <div className="flex justify-between  p-2 items-center border-b-2  mb-11">
-      <div className=" flex items-center  gap-4  border-b-gray-200 select-none">
+    <div className="flex justify-between p-2 items-center border-b-2  mb-11">
+      <div className=" flex items-center gap-4  border-b-gray-200 select-none">
         <svg
           stroke="currentColor"
           fill="currentColor"
