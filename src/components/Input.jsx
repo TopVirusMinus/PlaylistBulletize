@@ -7,12 +7,6 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const handleAllPages = (nextPageToken) => {
-    allNextPageTokens = [];
-
-    return allNextPageTokens;
-  };
-
   let playlistRegex =
     /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?youtube\.com\/(?:playlist\?list=|watch\?v=\w+&list=)([a-zA-Z0-9_-]+)/;
   const isValidYouTubePlaylistUrl = (url) => {
@@ -57,10 +51,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         nextPageToken && `&pageToken=${nextPageToken}`
       }`;
 
-      console.log(url);
-
       const response = await axios.get(url);
-      console.log(response);
       const playlistData = response?.data.items;
       let nextPages = [];
       let currentNextPageToken = response.data.nextPageToken;
@@ -77,11 +68,10 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
       if (currentNextPageToken) {
         getPlaylistData(currentNextPageToken);
       } else {
-        console.log(playlistData);
         return;
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       setIsLoading((prev) => false);
       setError((prev) => true);
     }
@@ -122,7 +112,10 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         )}
       </p>
       <button
-        onClick={() => getPlaylistData("")}
+        onClick={() => {
+          getPlaylistData("");
+          handlePlaylistInfo((prev) => "");
+        }}
         disabled={!playlistRegex.test(text)}
         className="border-2 enabled:border-black p-2 w-64 font-bold rounded-md enabled:hover:bg-black enabled:hover:text-gray-50 disabled:border-[gray] disabled:text-gray-600"
       >
