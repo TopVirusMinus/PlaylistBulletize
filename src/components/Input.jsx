@@ -47,7 +47,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         text.split("=")[1]
       }&key=${
         import.meta.env.VITE_YOUTUBE_API_KEY
-      }&maxResults=200&part=snippet,id${
+      }&maxResults=50&part=snippet,id${
         nextPageToken && `&pageToken=${nextPageToken}`
       }`;
 
