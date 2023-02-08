@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 const Results = ({ list }) => {
@@ -6,7 +6,8 @@ const Results = ({ list }) => {
   const [custom, setCustom] = useState(false);
   const [customText, setCustomText] = useState("");
   const [checkedReverse, setCheckedReverse] = useState(false);
-  const listOfVideos = list.map((l, i) =>
+  const [checkedRemovePriv, setCheckedRemovePriv] = useState(false);
+  let listOfVideos = list.map((l, i) =>
     custom
       ? `${customText}${l.snippet.title}`
       : listType === "bulleted"
@@ -18,6 +19,11 @@ const Results = ({ list }) => {
 
   //console.log(list);
   checkedReverse && listOfVideos.reverse();
+  if (checkedRemovePriv) {
+    listOfVideos = listOfVideos.filter(
+      (v) => v !== "Deleted video" && v !== "Private video"
+    );
+  }
 
   const copyList = listOfVideos.join("\r\n");
   const copyToast = () => toast.success("Copied To Clipboard!");
@@ -86,10 +92,19 @@ const Results = ({ list }) => {
           <input
             className="mr-2"
             type="checkbox"
-            defaultChecked={checkedReverse}
+            defaultChecked={false}
             onChange={() => setCheckedReverse(!checkedReverse)}
           />
           Reverse
+        </label>
+        <label>
+          <input
+            className="mr-2"
+            type="checkbox"
+            defaultChecked={false}
+            onChange={() => setCheckedRemovePriv(!checkedRemovePriv)}
+          />
+          Remove Deleted/Private Videos
         </label>
       </div>
       <div className="read-only overflow-y-scroll overflow-x-auto w-fit lg:max-w-80% sm:w-100% w-max-sm mt-5 font-semibold block h-80 px-3 outline-none text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
