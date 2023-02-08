@@ -72,7 +72,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         disabled={!playlistRegex.test(text) && !playlistRegex2.test(text)}
         className="border-2 enabled:border-black p-2 w-64 font-bold rounded-md enabled:hover:bg-black enabled:hover:text-gray-50 disabled:border-[gray] disabled:text-gray-600"
       >
-        Fetch
+        Get Playlist
       </button>
       <Toaster />
     </div>
