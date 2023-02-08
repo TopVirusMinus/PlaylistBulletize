@@ -3,11 +3,13 @@ import toast, { Toaster } from "react-hot-toast";
 
 const Results = ({ list }) => {
   const [listType, setListType] = useState("none");
+  const [custom, setCustom] = useState(false);
+  const [customText, setCustomText] = useState("");
   const [checkedReverse, setCheckedReverse] = useState(false);
-  console.log(listType);
-
   const listOfVideos = list.map((l, i) =>
-    listType === "bulleted"
+    custom
+      ? `${customText}${l.snippet.title}`
+      : listType === "bulleted"
       ? `- ${l.snippet.title}`
       : listType === "numbered"
       ? `${i + 1}. ${l.snippet.title}`
@@ -22,10 +24,11 @@ const Results = ({ list }) => {
   return (
     <div className="mx-auto w-fit mt-4">
       <div className="flex flex-col ">
-        <p className="font-bold">Format List: </p>
+        <p className="font-bold">Formatting: </p>
         <label className="w-28">
           <input
             type="radio"
+            disabled={custom}
             name="listType"
             value="none"
             checked={listType === "none"}
@@ -37,6 +40,7 @@ const Results = ({ list }) => {
         <label className="w-28">
           <input
             type="radio"
+            disabled={custom}
             name="listType"
             value="bulleted"
             checked={listType === "bulleted"}
@@ -48,6 +52,7 @@ const Results = ({ list }) => {
         <label className=" w-28">
           <input
             type="radio"
+            disabled={custom}
             name="listType"
             value="numbered"
             checked={listType === "numbered"}
@@ -56,6 +61,26 @@ const Results = ({ list }) => {
           />
           Numbered
         </label>
+        <div>
+          <label>
+            <input
+              className="mr-2"
+              type="checkbox"
+              defaultChecked={false}
+              onChange={() => setCustom((prev) => !custom)}
+            />
+            Custom
+          </label>
+          <input
+            type="text"
+            disabled={!custom}
+            value={customText}
+            onChange={(e) => setCustomText((prev) => e.target.value)}
+            className={`border-2 ml-2 w-12 outline-none ${
+              custom && "border-lime-400"
+            }`}
+          />
+        </div>
         <label>
           <input
             className="mr-2"
