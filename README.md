@@ -1,4 +1,4 @@
 # PlaylistBulletize
 https://playlist-bulletize.vercel.app/
 </br>
-![](https://user-images.githubusercontent.com/40539669/217408611-e761b4ce-a745-4257-a60b-76b3487a0ea5.mp4)
+<iframe width="1280" height="720" src="https://www.youtube.com/embed/cpjLAUTWGSY" title="Playlist Bulletize Website" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
