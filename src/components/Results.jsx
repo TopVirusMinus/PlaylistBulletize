@@ -18,7 +18,10 @@ const Results = ({ list }) => {
   );
 
   //console.log(list);
-  checkedReverse && listOfVideos.reverse();
+  if (checkedReverse) {
+    listOfVideos.reverse();
+  }
+
   if (checkedRemovePriv) {
     listOfVideos = listOfVideos.filter(
       (v) => v !== "Deleted video" && v !== "Private video"

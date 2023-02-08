@@ -39,7 +39,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
     setText((prev) => e.target.value);
     handleUrlChange((prev) => e.target.value);
   };
-  const getPlaylistData = async (nextPageToken) => {
+  const getPlaylistData = async (nextPageToken, ct) => {
     try {
       setIsLoading((prev) => true);
 
@@ -65,8 +65,8 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         setError((prev) => "Playlist Not Found");
       }
 
-      if (currentNextPageToken) {
-        getPlaylistData(currentNextPageToken);
+      if (currentNextPageToken || ct === 100) {
+        getPlaylistData(currentNextPageToken, ct + 1);
       } else {
         return;
       }
