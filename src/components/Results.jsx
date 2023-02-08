@@ -67,10 +67,16 @@ const Results = ({ list }) => {
         </label>
       </div>
       <div class="read-only overflow-scroll w-fit lg:max-w-80% sm:w-100% w-max-sm mt-5 font-semibold block h-80 px-3 outline-none text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
-        {listOfVideos.map((l) => (
-          <div>{l}</div>
+        {listOfVideos.map((l, i) => (
+          <div key={i}>{l}</div>
         ))}
       </div>
+      <p>
+        Found{" "}
+        {listOfVideos.length === 1
+          ? `${listOfVideos.length} Video`
+          : `${listOfVideos.length} Videos`}
+      </p>
       <button
         className="mt-2 mx-auto bg-white hover:bg-lime-500 hover:text-black text-gray-800 font-semibold py-2 px-4 border-2 border-lime-500 rounded shadow"
         onClick={() => {

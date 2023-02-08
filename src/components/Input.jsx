@@ -5,7 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(false);
 
   let playlistRegex = /https:\/\/www\.youtube\.com\/playlist\?list=[\S]+/;
   let playlistRegex2 = /https:\/\/\youtube\.com\/playlist\?list=[\S]+/;
@@ -34,7 +34,8 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         setError((prev) => "Playlist Not Found");
       }
     } catch (error) {
-      setError((prev) => error);
+      setIsLoading((prev) => false);
+      setError((prev) => true);
     }
   };
 
@@ -53,15 +54,15 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
       />
       <p
         className={` ${
-          playListInfo[0] && "opacity-0	"
-        } sm:text-center mt-2 text-gray-700`}
+          error ? "opacity-100" : "opacity-0"
+        }  sm:text-center mt-2 text-gray-700`}
       >
         {!playlistRegex.test(text) && !playlistRegex2.test(text)
           ? "URL Format: https://www.youtube.com/playlist?list="
           : isLoading
           ? "Fetching Playlist..."
           : error
-          ? error
+          ? "Playlist Not Found"
           : playListInfo[0]
           ? toast.success("Playlist Found!")
           : ""}
