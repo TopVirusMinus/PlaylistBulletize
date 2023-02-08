@@ -7,6 +7,12 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  const handleAllPages = (nextPageToken) => {
+    allNextPageTokens = [];
+
+    return allNextPageTokens;
+  };
+
   let playlistRegex =
     /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?youtube\.com\/(?:playlist\?list=|watch\?v=\w+&list=)([a-zA-Z0-9_-]+)/;
   const isValidYouTubePlaylistUrl = (url) => {
@@ -39,26 +45,43 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
     setText((prev) => e.target.value);
     handleUrlChange((prev) => e.target.value);
   };
-  const getPlaylistData = async () => {
+  const getPlaylistData = async (nextPageToken) => {
     try {
       setIsLoading((prev) => true);
-      const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${
-          text.split("=")[1]
-        }&key=${
-          import.meta.env.VITE_YOUTUBE_API_KEY
-        }&maxResults=200&part=snippet,id`
-      );
-      const playlistData = response.data.items;
+
+      const url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${
+        text.split("=")[1]
+      }&key=${
+        import.meta.env.VITE_YOUTUBE_API_KEY
+      }&maxResults=200&part=snippet,id${
+        nextPageToken && `&pageToken=${nextPageToken}`
+      }`;
+
+      console.log(url);
+
+      const response = await axios.get(url);
+      console.log(response);
+      const playlistData = response?.data.items;
+      let nextPages = [];
+      let currentNextPageToken = response.data.nextPageToken;
+
       setIsLoading((prev) => false);
       if (playlistData.length > 0) {
-        handlePlaylistInfo((prev) => playlistData);
+        handlePlaylistInfo((prev) => [...prev, ...playlistData]);
         setError((prev) => "");
       } else {
         handlePlaylistInfo((prev) => "");
         setError((prev) => "Playlist Not Found");
       }
+
+      if (currentNextPageToken) {
+        getPlaylistData(currentNextPageToken);
+      } else {
+        console.log(playlistData);
+        return;
+      }
     } catch (error) {
+      console.log(error);
       setIsLoading((prev) => false);
       setError((prev) => true);
     }
@@ -99,7 +122,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         )}
       </p>
       <button
-        onClick={() => getPlaylistData()}
+        onClick={() => getPlaylistData("")}
         disabled={!playlistRegex.test(text)}
         className="border-2 enabled:border-black p-2 w-64 font-bold rounded-md enabled:hover:bg-black enabled:hover:text-gray-50 disabled:border-[gray] disabled:text-gray-600"
       >
