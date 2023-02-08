@@ -7,8 +7,33 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  let playlistRegex = /https:\/\/www\.youtube\.com\/playlist\?list=[\S]+/;
-  let playlistRegex2 = /https:\/\/\youtube\.com\/playlist\?list=[\S]+/;
+  let playlistRegex =
+    /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?youtube\.com\/(?:playlist\?list=|watch\?v=\w+&list=)([a-zA-Z0-9_-]+)/;
+  const isValidYouTubePlaylistUrl = (url) => {
+    var result = playlistRegex.exec(url);
+    if (result) {
+      return {
+        valid: true,
+        playlistId: result[1],
+      };
+    }
+    return {
+      valid: false,
+      playlistId: "",
+    };
+  };
+
+  useEffect(() => {
+    if (isValidYouTubePlaylistUrl(text).valid) {
+      let id = playlistRegex.exec(text)[1];
+
+      setText(
+        (prev) =>
+          playlistRegex.test(text) &&
+          `https://www.youtube.com/playlist?list=${id}`
+      );
+    }
+  }, [text]);
 
   const handleChange = (e) => {
     setText((prev) => e.target.value);
@@ -47,29 +72,35 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         placeholder="Paste URL"
         onChange={(e) => handleChange(e)}
         className={`bg-transparent outline-none p-2 w-96 max-w-xs ${
-          !playlistRegex.test(text) && !playlistRegex2.test(text)
-            ? "outline-red-600"
-            : "outline-lime-400"
+          !playlistRegex.test(text) ? "outline-red-600" : "outline-lime-400"
         } `}
       />
       <p
         className={` ${
-          error ? "opacity-100" : "opacity-0"
+          !playListInfo[0] ? "opacity-100" : "opacity-0"
         }  sm:text-center mt-2 text-gray-700`}
       >
-        {!playlistRegex.test(text) && !playlistRegex2.test(text)
-          ? "URL Format: https://www.youtube.com/playlist?list="
-          : isLoading
-          ? "Fetching Playlist..."
-          : error
-          ? "Playlist Not Found"
-          : playListInfo[0]
-          ? toast.success("Playlist Found!")
-          : ""}
+        {!playlistRegex.test(text) ? (
+          <>
+            {"✨ URL must contain at the end "}
+            <br />
+            <strong className="text-lime-600">
+              &list=PLDoPjvoNmBAzhFD3niPAa1C1gXG4cs14J
+            </strong>
+          </>
+        ) : isLoading ? (
+          "Fetching Playlist..."
+        ) : error ? (
+          "💔 Playlist Not Found"
+        ) : playListInfo[0] ? (
+          toast.success("Playlist Found!")
+        ) : (
+          ""
+        )}
       </p>
       <button
         onClick={() => getPlaylistData()}
-        disabled={!playlistRegex.test(text) && !playlistRegex2.test(text)}
+        disabled={!playlistRegex.test(text)}
         className="border-2 enabled:border-black p-2 w-64 font-bold rounded-md enabled:hover:bg-black enabled:hover:text-gray-50 disabled:border-[gray] disabled:text-gray-600"
       >
         Get Playlist
