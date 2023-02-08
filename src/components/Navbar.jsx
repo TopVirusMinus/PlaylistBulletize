@@ -68,10 +68,7 @@ const Navbar = () => {
           </svg>
         </a>
 
-        <a
-          href="https://www.youtube.com/channel/UC8giOecbRtB_szJMiVu_mAQ"
-          target="_blank"
-        >
+        <a href="https://www.youtube.com/watch?v=cpjLAUTWGSY" target="_blank">
           <svg
             stroke="currentColor"
             fill="currentColor"
