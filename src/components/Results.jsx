@@ -91,7 +91,7 @@ const Results = ({ list }) => {
           Reverse
         </label>
       </div>
-      <div class="read-only overflow-scroll w-fit lg:max-w-80% sm:w-100% w-max-sm mt-5 font-semibold block h-80 px-3 outline-none text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+      <div className="read-only overflow-scroll w-fit lg:max-w-80% sm:w-100% w-max-sm mt-5 font-semibold block h-80 px-3 outline-none text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
         {listOfVideos.map((l, i) => (
           <div key={i}>{l}</div>
         ))}
