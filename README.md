@@ -2,4 +2,4 @@
 https://playlist-bulletize.vercel.app/
 </br>
 
-Uploading playlistbulletize.mp4…
+https://www.youtube.com/watch?v=LJAI_do-sao
