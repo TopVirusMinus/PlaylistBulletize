@@ -5,7 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
   const playlistRegex = /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?youtube\.com\/(?:playlist\?list=|watch\?v=\w+&list=)([a-zA-Z0-9_-]+)/;
 
@@ -59,17 +59,19 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
   };
 
   return (
-    <div className="flex flex-col items-center mt-8">
-      <div className="w-full max-w-md">
+    <div className="flex flex-col items-center mt-12 px-4">
+      <div className="w-full max-w-2xl">
         <div className="relative">
           <input
             type="text"
             value={text}
             placeholder="Paste YouTube Playlist URL"
             onChange={handleChange}
-            className={`w-full px-4 py-2 text-gray-700 bg-white border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-              !playlistRegex.test(text) ? "focus:ring-red-300 border-red-300" : "focus:ring-indigo-300 border-gray-300"
-            }`}
+            className={`w-full px-6 py-4 text-lg text-gray-800 bg-white border-2 rounded-full focus:outline-none focus:ring-2 transition-all duration-300 ${
+              !playlistRegex.test(text) 
+                ? "focus:ring-red-300 border-red-300" 
+                : "focus:ring-indigo-300 border-indigo-300"
+            } shadow-md hover:shadow-lg`}
           />
           <button
             onClick={() => {
@@ -77,24 +79,46 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
               handlePlaylistInfo([]);
             }}
             disabled={!playlistRegex.test(text) || isLoading}
-            className="absolute right-0 top-0 mt-2 mr-2 bg-indigo-600 text-white px-4 py-1 rounded-md text-sm font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-indigo-600 text-white px-6 py-2 rounded-full text-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 shadow-md hover:shadow-lg"
           >
-            {isLoading ? "Loading..." : "Get Playlist"}
+            {isLoading ? (
+              <span className="flex items-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Loading...
+              </span>
+            ) : (
+              "Get Playlist"
+            )}
           </button>
         </div>
-        <p className={`mt-2 text-sm ${error ? "text-red-500" : "text-gray-500"}`}>
-          {!playlistRegex.test(text)
-            ? "✨ URL must contain '&list=' or 'playlist?list=' parameter"
-            : error
-            ? error
-            : isLoading
-            ? "Fetching Playlist..."
-            : playListInfo.length > 0
-            ? `Found ${playListInfo.length} videos in the playlist`
-            : ""}
-        </p>
+        <div className={`mt-4 text-center transition-all duration-300 ${error ? "text-red-500" : "text-gray-600"}`}>
+          {!playlistRegex.test(text) ? (
+            <p className="text-sm">✨ URL must contain '&list=' or 'playlist?list=' parameter</p>
+          ) : error ? (
+            <p className="text-sm">{error}</p>
+          ) : isLoading ? (
+            <p className="text-sm animate-pulse">Fetching Playlist...</p>
+          ) : playListInfo.length > 0 ? (
+            <p className="text-lg font-semibold text-indigo-600">
+              Found {playListInfo.length} videos in the playlist
+            </p>
+          ) : null}
+        </div>
       </div>
-      <Toaster />
+      <Toaster 
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            background: '#4338CA',
+            color: '#ffffff',
+            padding: '16px',
+            borderRadius: '9999px',
+          },
+        }}
+      />
     </div>
   );
 };
