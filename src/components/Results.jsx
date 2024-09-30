@@ -18,8 +18,9 @@ const Results = ({ list }) => {
   const [checkedReverse, setCheckedReverse] = useState(false);
   const [checkedRemovePriv, setCheckedRemovePriv] = useState(false);
   const [checkedRemoveDuplicates, setCheckedRemoveDuplicates] = useState(false);
-  const [includeUrl, setIncludeUrl] = useState(true);
+  const [includeUrl, setIncludeUrl] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [regexFilter, setRegexFilter] = useState("");
   const [processedList, setProcessedList] = useState([]);
 
   useEffect(() => {
@@ -38,12 +39,21 @@ const Results = ({ list }) => {
       });
     }
 
+    if (regexFilter) {
+      try {
+        const regex = new RegExp(regexFilter, 'i');
+        processed = processed.filter(item => regex.test(item.snippet.title));
+      } catch (error) {
+        console.error("Invalid regex:", error);
+      }
+    }
+
     if (checkedReverse) {
       processed = processed.slice().reverse();
     }
 
     setProcessedList(processed);
-  }, [list, checkedRemovePriv, checkedRemoveDuplicates, checkedReverse]);
+  }, [list, checkedRemovePriv, checkedRemoveDuplicates, checkedReverse, regexFilter]);
 
   const formatListItem = (item, index) => {
     const { title, resourceId } = item.snippet;
@@ -52,7 +62,7 @@ const Results = ({ list }) => {
     const videoInfo = includeUrl ? `${title} - ${url}` : title;
 
     if (listType === "Programming") {
-      return `"${videoInfo.replace(/"/g, '\\"')}"`;
+      return `<a href="${url}" target="_blank" class="text-blue-600 hover:text-blue-800 underline">${videoInfo.replace(/"/g, '&quot;')}</a>`;
     }
 
     let prefix = "";
@@ -64,20 +74,54 @@ const Results = ({ list }) => {
       prefix = customPrefix;
     }
 
-    return `${prefix}${videoInfo}`;
+    return `<li class="mb-2">${prefix}<a target="_blank" href="${url}" class="text-blue-600 hover:text-blue-800 underline">${videoInfo}</a></li>`;
   };
 
-  const getFormattedList = () => {
-    const formattedItems = processedList.map((l, i) => formatListItem(l, i));
+  const getFormattedList = (includeHtml = true) => {
+    const formattedItems = processedList.map((l, i) => {
+      const { title, resourceId } = l.snippet;
+      const videoId = resourceId.videoId;
+      const url = `https://www.youtube.com/watch?v=${videoId}`;
+
+      let prefix = "";
+      if (listType === "bulleted") {
+        prefix = customPrefix || "- ";
+      } else if (listType === "numbered") {
+        prefix = customPrefix ? `${customPrefix}${i + 1}. ` : `${i + 1}. `;
+      } else if (customPrefix) {
+        prefix = customPrefix;
+      }
+
+      let content;
+      if (includeUrl) {
+        content = `[${title}](${url})`;
+      } else {
+        content = title;
+      }
+      
+      if (includeHtml) {
+        return includeUrl
+          ? `${prefix}<a target="_blank" href="${url}" class="text-blue-600 hover:text-blue-800 underline">${title}</a><br>`
+          : `${prefix}${title}<br>`;
+      } else {
+        return `${prefix}${content}`;
+      }
+    });
+
     if (listType === "Programming") {
       const [openBracket, closeBracket] = ProgrammingBrackets.split('');
       return `${openBracket}\n  ${formattedItems.join(",\n  ")}\n${closeBracket}`;
     }
-    return formattedItems.join("\n");
+
+    if (includeHtml) {
+      return formattedItems.join("");
+    } else {
+      return formattedItems.join("\n");
+    }
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(getFormattedList());
+    navigator.clipboard.writeText(getFormattedList(false));
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
@@ -166,6 +210,21 @@ const Results = ({ list }) => {
                   <span className="text-gray-700">{label}</span>
                 </label>
               ))}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Regex Filter
+                </label>
+                <input
+                  type="text"
+                  value={regexFilter}
+                  onChange={(e) => setRegexFilter(e.target.value)}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
+                  placeholder="Enter regex pattern"
+                />
+                <p className="mt-1 text-sm text-gray-500">
+                  Filter video titles using a regular expression
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -173,9 +232,10 @@ const Results = ({ list }) => {
         <div className="mb-8">
           <h3 className="font-semibold text-indigo-800 mb-4 text-xl">Results:</h3>
           <div className="bg-white rounded-lg border border-gray-300 h-96 overflow-y-auto p-6 shadow-inner">
-            <pre className="whitespace-pre-wrap break-words text-gray-800">
-              {getFormattedList()}
-            </pre>
+            <div 
+              className="whitespace-pre-wrap break-words text-gray-800"
+              dangerouslySetInnerHTML={{ __html: getFormattedList() }}
+            />
           </div>
         </div>
         
