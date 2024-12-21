@@ -1,23 +1,8 @@
-import React, { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useVideoDurations } from "../hooks/useVideoDurations";
 import { useProcessedList } from "../hooks/useProcessedList";
-
-const formatDuration = (duration) => {
-  if (!duration) return "";
-  const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-
-  const hours = (match[1] || "").replace("H", "");
-  const minutes = (match[2] || "").replace("M", "");
-  const seconds = (match[3] || "").replace("S", "");
-
-  let formatted = "";
-  if (hours) formatted += `${hours}:`;
-  formatted += `${minutes.padStart(2, "0")}:`;
-  formatted += seconds.padStart(2, "0");
-
-  return ` (${formatted})`;
-};
+import { formatList } from "../utils/formatters";
 
 const Results = ({ list }) => {
   const [listType, setListType] = useState("none");
@@ -42,51 +27,15 @@ const Results = ({ list }) => {
   });
 
   const getFormattedList = (includeHtml = true) => {
-    const formattedItems = processedList.map((l, i) => {
-      const { title, resourceId } = l.snippet;
-      const videoId = resourceId.videoId;
-      const url = `https://www.youtube.com/watch?v=${videoId}`;
-      const duration = videoDurations[videoId] || "PT0M0S";
-      console.log(duration);
-      const formattedDuration = showDuration ? formatDuration(duration) : "";
-
-      let prefix = "";
-      if (listType === "bulleted") {
-        prefix = customPrefix || "- ";
-      } else if (listType === "numbered") {
-        prefix = customPrefix ? `${customPrefix}${i + 1}. ` : `${i + 1}. `;
-      } else if (customPrefix) {
-        prefix = customPrefix;
-      }
-
-      let content;
-      if (includeUrl) {
-        content = `[${title}${formattedDuration}](${url})`;
-      } else {
-        content = `${title}${formattedDuration}`;
-      }
-
-      if (includeHtml) {
-        return includeUrl
-          ? `${prefix}<a target="_blank" href="${url}" class="text-blue-600 hover:text-blue-800 underline">${title}${formattedDuration}</a><br>`
-          : `${prefix}${title}${formattedDuration}<br>`;
-      } else {
-        return `${prefix}${content}`;
-      }
+    return formatList(processedList, {
+      includeHtml,
+      includeUrl,
+      showDuration,
+      listType,
+      customPrefix,
+      ProgrammingBrackets,
+      videoDurations,
     });
-
-    if (listType === "Programming") {
-      const [openBracket, closeBracket] = ProgrammingBrackets.split("");
-      return `${openBracket}\n  ${formattedItems.join(
-        ",\n  "
-      )}\n${closeBracket}`;
-    }
-
-    if (includeHtml) {
-      return formattedItems.join("");
-    } else {
-      return formattedItems.join("\n");
-    }
   };
 
   const copyToClipboard = () => {
@@ -98,7 +47,6 @@ const Results = ({ list }) => {
     <div className="max-w-6xl mx-auto mt-8 bg-gradient-to-br from-purple-100 to-indigo-200 shadow-xl rounded-2xl overflow-hidden">
       <div className="p-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
-          {/* Formatting Section */}
           <div className="bg-white p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl">
             <h3 className="font-bold text-indigo-800 mb-6 text-2xl">
               Formatting
