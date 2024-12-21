@@ -25,7 +25,6 @@ const Results = ({ list }) => {
   const [checkedRemovePriv, setCheckedRemovePriv] = useState(false);
   const [checkedRemoveDuplicates, setCheckedRemoveDuplicates] = useState(false);
   const [includeUrl, setIncludeUrl] = useState(false);
-  const [showToast, setShowToast] = useState(false);
   const [regexFilter, setRegexFilter] = useState("");
   const [processedList, setProcessedList] = useState([]);
   const [negateRegex, setNegateRegex] = useState(false);
