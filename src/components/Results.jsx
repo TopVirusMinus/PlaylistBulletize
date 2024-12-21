@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { useVideoDurations } from "../hooks/useVideoDurations";
+import { useProcessedList } from "../hooks/useProcessedList";
 
 const formatDuration = (duration) => {
   if (!duration) return "";
@@ -26,92 +28,18 @@ const Results = ({ list }) => {
   const [checkedRemoveDuplicates, setCheckedRemoveDuplicates] = useState(false);
   const [includeUrl, setIncludeUrl] = useState(false);
   const [regexFilter, setRegexFilter] = useState("");
-  const [processedList, setProcessedList] = useState([]);
   const [negateRegex, setNegateRegex] = useState(false);
   const [showDuration, setShowDuration] = useState(false);
-  const [videoDurations, setVideoDurations] = useState({});
 
-  useEffect(() => {
-    const fetchDurations = async () => {
-      const videoIds = list.map((item) => item.snippet.resourceId.videoId);
-      const chunks = [];
-      for (let i = 0; i < videoIds.length; i += 50) {
-        chunks.push(videoIds.slice(i, i + 50));
-      }
-
-      const durationsMap = {};
-      for (const chunk of chunks) {
-        try {
-          const response = await fetch(
-            `https://www.googleapis.com/youtube/v3/videos?` +
-              `id=${chunk.join(",")}&part=contentDetails&key=${
-                import.meta.env.VITE_YOUTUBE_API_KEY
-              }`
-          );
-          const data = await response.json();
-
-          data.items.forEach((item) => {
-            durationsMap[item.id] = item.contentDetails.duration;
-          });
-        } catch (error) {
-          console.error("Error fetching video durations:", error);
-        }
-      }
-      setVideoDurations(durationsMap);
-    };
-
-    if (list.length > 0) {
-      fetchDurations();
-    }
-  }, [list]);
-
-  useEffect(() => {
-    let processed = list;
-
-    if (checkedRemovePriv) {
-      processed = processed.filter(
-        (v) =>
-          !v.snippet.title.includes("Deleted video") &&
-          !v.snippet.title.includes("Private video")
-      );
-    }
-
-    if (checkedRemoveDuplicates) {
-      const seen = new Set();
-      processed = processed.filter((item) => {
-        const duplicate = seen.has(item.snippet.resourceId.videoId);
-        seen.add(item.snippet.resourceId.videoId);
-        return !duplicate;
-      });
-    }
-
-    if (regexFilter) {
-      try {
-        const regex = new RegExp(regexFilter, "i");
-        processed = processed.filter((item) =>
-          negateRegex
-            ? !regex.test(item.snippet.title)
-            : regex.test(item.snippet.title)
-        );
-      } catch (error) {
-        console.error("Invalid regex:", error);
-      }
-    }
-
-    if (checkedReverse) {
-      processed = processed.slice().reverse();
-    }
-
-    setProcessedList(processed);
-  }, [
-    list,
+  const videoDurations = useVideoDurations(list);
+  const processedList = useProcessedList(list, {
     checkedRemovePriv,
     checkedRemoveDuplicates,
     checkedReverse,
     regexFilter,
     negateRegex,
     showDuration,
-  ]);
+  });
 
   const getFormattedList = (includeHtml = true) => {
     const formattedItems = processedList.map((l, i) => {
