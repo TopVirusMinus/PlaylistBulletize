@@ -1,6 +1,22 @@
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
+const formatDuration = (duration) => {
+  if (!duration) return "";
+  const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+
+  const hours = (match[1] || "").replace("H", "");
+  const minutes = (match[2] || "").replace("M", "");
+  const seconds = (match[3] || "").replace("S", "");
+
+  let formatted = "";
+  if (hours) formatted += `${hours}:`;
+  formatted += `${minutes.padStart(2, "0")}:`;
+  formatted += seconds.padStart(2, "0");
+
+  return ` (${formatted})`;
+};
+
 const Results = ({ list }) => {
   const [listType, setListType] = useState("none");
   const [customPrefix, setCustomPrefix] = useState("");
@@ -13,6 +29,42 @@ const Results = ({ list }) => {
   const [regexFilter, setRegexFilter] = useState("");
   const [processedList, setProcessedList] = useState([]);
   const [negateRegex, setNegateRegex] = useState(false);
+  const [showDuration, setShowDuration] = useState(false);
+  const [videoDurations, setVideoDurations] = useState({});
+
+  useEffect(() => {
+    const fetchDurations = async () => {
+      const videoIds = list.map((item) => item.snippet.resourceId.videoId);
+      const chunks = [];
+      for (let i = 0; i < videoIds.length; i += 50) {
+        chunks.push(videoIds.slice(i, i + 50));
+      }
+
+      const durationsMap = {};
+      for (const chunk of chunks) {
+        try {
+          const response = await fetch(
+            `https://www.googleapis.com/youtube/v3/videos?` +
+              `id=${chunk.join(",")}&part=contentDetails&key=${
+                import.meta.env.VITE_YOUTUBE_API_KEY
+              }`
+          );
+          const data = await response.json();
+
+          data.items.forEach((item) => {
+            durationsMap[item.id] = item.contentDetails.duration;
+          });
+        } catch (error) {
+          console.error("Error fetching video durations:", error);
+        }
+      }
+      setVideoDurations(durationsMap);
+    };
+
+    if (list.length > 0) {
+      fetchDurations();
+    }
+  }, [list]);
 
   useEffect(() => {
     let processed = list;
@@ -59,40 +111,17 @@ const Results = ({ list }) => {
     checkedReverse,
     regexFilter,
     negateRegex,
+    showDuration,
   ]);
-
-  const formatListItem = (item, index) => {
-    const { title, resourceId } = item.snippet;
-    const videoId = resourceId.videoId;
-    const url = `https://www.youtube.com/watch?v=${videoId}`;
-    const videoInfo = includeUrl ? `${title} - ${url}` : title;
-
-    if (listType === "Programming") {
-      return `<a href="${url}" target="_blank" class="text-blue-600 hover:text-blue-800 underline">${videoInfo.replace(
-        /"/g,
-        "&quot;"
-      )}</a>`;
-    }
-
-    let prefix = "";
-    if (listType === "bulleted") {
-      prefix = customPrefix || "- ";
-    } else if (listType === "numbered") {
-      prefix = customPrefix
-        ? `${customPrefix}${index + 1}. `
-        : `${index + 1}. `;
-    } else if (customPrefix) {
-      prefix = customPrefix;
-    }
-
-    return `<li class="mb-2">${prefix}<a target="_blank" href="${url}" class="text-blue-600 hover:text-blue-800 underline">${videoInfo}</a></li>`;
-  };
 
   const getFormattedList = (includeHtml = true) => {
     const formattedItems = processedList.map((l, i) => {
       const { title, resourceId } = l.snippet;
       const videoId = resourceId.videoId;
       const url = `https://www.youtube.com/watch?v=${videoId}`;
+      const duration = videoDurations[videoId] || "PT0M0S";
+      console.log(duration);
+      const formattedDuration = showDuration ? formatDuration(duration) : "";
 
       let prefix = "";
       if (listType === "bulleted") {
@@ -105,15 +134,15 @@ const Results = ({ list }) => {
 
       let content;
       if (includeUrl) {
-        content = `[${title}](${url})`;
+        content = `[${title}${formattedDuration}](${url})`;
       } else {
-        content = title;
+        content = `${title}${formattedDuration}`;
       }
 
       if (includeHtml) {
         return includeUrl
-          ? `${prefix}<a target="_blank" href="${url}" class="text-blue-600 hover:text-blue-800 underline">${title}</a><br>`
-          : `${prefix}${title}<br>`;
+          ? `${prefix}<a target="_blank" href="${url}" class="text-blue-600 hover:text-blue-800 underline">${title}${formattedDuration}</a><br>`
+          : `${prefix}${title}${formattedDuration}<br>`;
       } else {
         return `${prefix}${content}`;
       }
@@ -135,8 +164,7 @@ const Results = ({ list }) => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(getFormattedList(false));
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    toast.success("Copied to clipboard!");
   };
 
   return (
@@ -240,6 +268,11 @@ const Results = ({ list }) => {
                   state: includeUrl,
                   setState: setIncludeUrl,
                 },
+                {
+                  label: "Show Duration",
+                  state: showDuration,
+                  setState: setShowDuration,
+                },
               ].map(({ label, state, setState }) => (
                 <label key={label} className="flex items-center cursor-pointer">
                   <input
@@ -279,7 +312,7 @@ const Results = ({ list }) => {
                     id="regex-checkbox"
                   />
                   <label
-                    for="regex-checkbox"
+                    htmlFor="regex-checkbox"
                     className="text-gray-700 cursor-pointer select-none"
                   >
                     Invert Regex
@@ -314,12 +347,6 @@ const Results = ({ list }) => {
           </button>
         </div>
       </div>
-      {showToast && (
-        <Toast
-          message="Copied to clipboard!"
-          onClose={() => setShowToast(false)}
-        />
-      )}
     </div>
   );
 };
