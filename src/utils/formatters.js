@@ -33,7 +33,13 @@ export const formatters = {
 
   Programming: (items, { ProgrammingBrackets }) => {
     const [open, close] = ProgrammingBrackets.split("");
-    return [`${open}`, ...items.map((item) => `  ${item}`), close];
+    return [
+      `${open}`,
+      ...items.map(
+        (item, index) => `  ${item}${index < items.length - 1 ? "," : ""}`
+      ),
+      close,
+    ];
   },
 };
 
