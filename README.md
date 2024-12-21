@@ -1,7 +1,9 @@
 https://playlist-bulletize.vercel.app/
 </br>
 
-https://user-images.githubusercontent.com/40539669/217536669-f49760ec-1b26-4a65-9a7a-fbf873cc877c.mp4
+
+https://github.com/user-attachments/assets/8d96cf44-1abe-43e7-8316-052a84e9b6cd
+
 
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
