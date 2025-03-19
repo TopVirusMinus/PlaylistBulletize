@@ -52,12 +52,19 @@ export const formatList = (processedList, options) => {
     customPrefix = "",
     ProgrammingBrackets = "[]",
     videoDurations = {},
+    urlOnly = false,
   } = options;
 
   const baseItems = processedList.map((l) => {
-    const { title, resourceId } = l.snippet;
+    const { resourceId } = l.snippet;
     const videoId = resourceId.videoId;
     const url = `https://www.youtube.com/watch?v=${videoId}`;
+
+    if (urlOnly) {
+      return url;
+    }
+
+    const { title } = l.snippet;
     const duration = videoDurations[videoId] || "PT0M0S";
     const formattedDuration = showDuration ? formatDuration(duration) : "";
 

@@ -15,6 +15,7 @@ const Results = ({ list }) => {
   const [regexFilter, setRegexFilter] = useState("");
   const [negateRegex, setNegateRegex] = useState(false);
   const [showDuration, setShowDuration] = useState(false);
+  const [urlOnly, setUrlOnly] = useState(false);
 
   const videoDurations = useVideoDurations(list);
   const processedList = useProcessedList(list, {
@@ -35,6 +36,7 @@ const Results = ({ list }) => {
       customPrefix,
       ProgrammingBrackets,
       videoDurations,
+      urlOnly,
     });
   };
 
@@ -147,6 +149,11 @@ const Results = ({ list }) => {
                   label: "Show Duration",
                   state: showDuration,
                   setState: setShowDuration,
+                },
+                {
+                  label: "URLs only",
+                  state: urlOnly,
+                  setState: setUrlOnly,
                 },
               ].map(({ label, state, setState }) => (
                 <label key={label} className="flex items-center cursor-pointer">
