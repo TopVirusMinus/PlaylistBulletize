@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { useVideoDurations } from "../hooks/useVideoDurations";
+import { useVideoDetails } from "../hooks/useVideoDurations";
 import { useProcessedList } from "../hooks/useProcessedList";
 import { formatList } from "../utils/formatters";
 
@@ -16,8 +16,9 @@ const Results = ({ list }) => {
   const [negateRegex, setNegateRegex] = useState(false);
   const [showDuration, setShowDuration] = useState(false);
   const [urlOnly, setUrlOnly] = useState(false);
+  const [showChannelName, setShowChannelName] = useState(true);
 
-  const videoDurations = useVideoDurations(list);
+  const videoDetails = useVideoDetails(list);
   const processedList = useProcessedList(list, {
     checkedRemovePriv,
     checkedRemoveDuplicates,
@@ -35,8 +36,9 @@ const Results = ({ list }) => {
       listType,
       customPrefix,
       ProgrammingBrackets,
-      videoDurations,
+      videoDetails,
       urlOnly,
+      showChannelName,
     });
   };
 
@@ -86,16 +88,16 @@ const Results = ({ list }) => {
                       listType === "numbered"
                         ? "1. "
                         : listType === "bulleted"
-                        ? "- "
-                        : "Enter prefix"
+                          ? "- "
+                          : "Enter prefix"
                     }
                   />
                   <p className="mt-1 text-sm text-gray-500">
                     {listType === "numbered"
                       ? "Will be prepended to the number, e.g. 'Chapter 1. '"
                       : listType === "bulleted"
-                      ? "Will replace the default bullet point"
-                      : "Will be prepended to each item"}
+                        ? "Will replace the default bullet point"
+                        : "Will be prepended to each item"}
                   </p>
                 </div>
               )}
@@ -149,6 +151,11 @@ const Results = ({ list }) => {
                   label: "Show Duration",
                   state: showDuration,
                   setState: setShowDuration,
+                },
+                {
+                  label: "Show Channel Name",
+                  state: showChannelName,
+                  setState: setShowChannelName,
                 },
                 {
                   label: "URLs only",

@@ -11,7 +11,7 @@ export const formatDuration = (duration) => {
   formatted += `${minutes.padStart(2, "0")}:`;
   formatted += seconds.padStart(2, "0");
 
-  return ` (${formatted})`;
+  return `[${formatted}]`;
 };
 
 export const formatters = {
@@ -51,11 +51,15 @@ export const formatList = (processedList, options) => {
     listType = "none",
     customPrefix = "",
     ProgrammingBrackets = "[]",
-    videoDurations = {},
+    videoDetails = {},
     urlOnly = false,
+    showChannelName = true,
   } = options;
 
   const baseItems = processedList.map((l) => {
+    if (!l?.snippet?.resourceId?.videoId) {
+      return "Video unavailable";
+    }
     const { resourceId } = l.snippet;
     const videoId = resourceId.videoId;
     const url = `https://www.youtube.com/watch?v=${videoId}`;
@@ -64,19 +68,32 @@ export const formatList = (processedList, options) => {
       return url;
     }
 
-    const { title } = l.snippet;
-    const duration = videoDurations[videoId] || "PT0M0S";
+    const { title = "Untitled" } = l.snippet;
+    const details = videoDetails[videoId] || {};
+    const duration = details.duration || "PT0M0S";
     const formattedDuration = showDuration ? formatDuration(duration) : "";
+    const channelName = details.channelTitle || "[Channel Unavailable]";
+
+    // Build the prefix with duration and channel name
+    let prefix = "";
+    if (formattedDuration) prefix += formattedDuration;
+    if (showChannelName) {
+      if (prefix) prefix += " • ";
+      prefix += `[${channelName}]`;
+    }
+
+    // Add bullet separator if we have a prefix
+    const content = prefix ? `${prefix} • ${title}` : title;
 
     if (includeHtml) {
       return includeUrl
-        ? `<a target="_blank" href="${url}" class="text-blue-600 hover:text-blue-800 underline">${title}${formattedDuration}</a>`
-        : `${title}${formattedDuration}`;
+        ? `<a target="_blank" href="${url}" class="text-blue-600 hover:text-blue-800 underline">${content}</a>`
+        : content;
     }
 
     return includeUrl
-      ? `[${title}${formattedDuration}](${url})`
-      : `${title}${formattedDuration}`;
+      ? `[${content}](${url})`
+      : content;
   });
 
   const formatter = formatters[listType] || formatters.none;
