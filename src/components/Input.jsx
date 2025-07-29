@@ -33,13 +33,10 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
   const getPlaylistData = async (nextPageToken, ct = 0) => {
     try {
       setIsLoading(true);
-      const url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${
-        text.split("=")[1]
-      }&key=${
-        import.meta.env.VITE_YOUTUBE_API_KEY
-      }&maxResults=50&part=snippet,id${
-        nextPageToken ? `&pageToken=${nextPageToken}` : ""
-      }`;
+      const url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${text.split("=")[1]
+        }&key=${import.meta.env.VITE_YOUTUBE_API_KEY
+        }&maxResults=50&part=snippet,id${nextPageToken ? `&pageToken=${nextPageToken}` : ""
+        }`;
 
       const response = await axios.get(url);
       const playlistData = response?.data.items;
@@ -65,9 +62,8 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
 
   return (
     <div
-      className={`flex flex-col items-center px-4 transition-all duration-500 ease-in-out ${
-        isTop ? "mt-12" : "mt-[30vh]"
-      }`}
+      className={`flex flex-col items-center px-4 transition-all duration-500 ease-in-out ${isTop ? "mt-12" : "mt-[30vh]"
+        }`}
     >
       <div className="w-full max-w-2xl">
         <div className="relative">
@@ -76,11 +72,10 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
             value={text}
             placeholder="Paste YouTube Playlist URL"
             onChange={handleChange}
-            className={`w-full px-6 py-4 text-lg text-gray-800 bg-white border-2 rounded-full focus:outline-none focus:ring-2 transition-all duration-300 ${
-              !playlistRegex.test(text)
-                ? "focus:ring-red-300 border-red-300"
-                : "focus:ring-indigo-300 border-indigo-300"
-            } shadow-md hover:shadow-lg`}
+            className={`w-full px-6 py-4 text-lg text-gray-800 bg-white border-2 rounded-full focus:outline-none focus:ring-2 transition-all duration-300 ${!playlistRegex.test(text)
+              ? "focus:ring-red-300 border-red-300"
+              : "focus:ring-indigo-300 border-indigo-300"
+              } shadow-md hover:shadow-lg`}
           />
           <button
             onClick={() => {
@@ -120,9 +115,8 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
           </button>
         </div>
         <div
-          className={`mt-4 text-center transition-all duration-300 ${
-            error ? "text-red-500" : "text-gray-600"
-          }`}
+          className={`mt-4 text-center transition-all duration-300 ${error ? "text-red-500" : "text-gray-600"
+            }`}
         >
           {!playlistRegex.test(text) ? (
             <p className="text-sm">
