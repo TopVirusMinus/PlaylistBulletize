@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Input from "./components/Input";
 import Results from "./components/Results";
 import Footer from "./components/Footer";
+import KofiWidget from "./components/KofiWidget";
 
 function App() {
   const [url, setUrl] = useState("");
@@ -27,6 +28,7 @@ function App() {
         </div>
       </main>
       <Footer />
+      <KofiWidget />
     </div>
   );
 }
